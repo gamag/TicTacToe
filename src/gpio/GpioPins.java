@@ -9,118 +9,144 @@ package gpio;
  */
 public enum GpioPins {
     /**
+     * Pin 1
      * 3.3V - Spannung für Geräte
      */
     PIN_1,
     /**
+     * Pin 2
      * +5v - Spannung für Geräte
      */
     PIN_2,
     /**
-     * GPIO / SDA
-     * I2C pull-up
+     * Pin 3
+     * GPIO
+     * SDA / I2C pull-up
      */
-    PIN_3,
+    GPIO_2,
     /**
+     * Pin 4
      * +5v - Spannung für Geräte
      */
     PIN_4,
     /**
-     * GPIO / SCL
-     * I2C pull-up
+     * Pin 5
+     * GPIO
+     * SCL / I2C pull-up
      */
-    PIN_5,
+    GPIO_3,
     /**
+     * Pin 6
      * Ground
      */
     PIN_6,
     /**
+     * Pin 7
      * GPIO
      */
-    PIN_7,
+    GPIO_4,
     /**
+     * Pin 8
      * GPIO / TXD
      * UART
      */
-    PIN_8,
+    GPIO_14,
     /**
+     * Pin 9
      * Ground
      */
     PIN_9,
     /**
+     * Pin 10
      * GPIO / TXD
      * UART
      */
-    PIN_10,
+    GPIO_15,
     /**
+     * Pin 11
      * GPIO
      * UART-RTS
      */
-    PIN_11,
+    GPIO_17,
     /**
+     * Pin 12
      * GPIO
      * PWM
      */
-    PIN_12,
+    GPIO_18,
     /**
+     * Pin 13
      * GPIO
      */
-    PIN_13,
+    GPIO_27,
     /**
+     * Pin 14
      * Ground
      */
     PIN_14,
     /**
+     * Pin 15
      * GPIO
      */
-    PIN_15,
+    GPIO_22,
     /**
+     * Pin 16
      * GPIO
      */
-    PIN_16,
+    GPIO_23,
     /**
+     * Pin 17
      * 3.3V - Spannung für Geräte
      */
     PIN_17,
     /**
+     * Pin 18
      * GPIO
      */
-    PIN_18,
+    GPIO_24,
     /**
+     * Pin 19
      * GPIO
      * SPI / MOSI
      */
-    PIN_19,
+    GPIO_10,
     /**
+     * Pin 20
      * Ground
      */
     PIN_20,
     /**
+     * Pin 21
      * GPIO
      * SPI / MISO
      */
-    PIN_21,
+    GPIO_9,
     /**
+     * Pin 22
      * GPIO
      */
-    PIN_22,
+    GPIO_25,
     /**
+     * Pin 23
      * GPIO
      * SPI / CLK
      */
-    PIN_23,
+    GPIO_11,
     /**
+     * Pin 24
      * GPIO
      * SPI / CE0
      */
-    PIN_24,
+    GPIO_8,
     /**
+     * Pin 25
      * Ground
      */
     PIN_25,
     /**
+     * Pin 26
      * GPIO
      * SPI / CE1
      */
-    PIN_26,
+    GPIO_7,
 }
