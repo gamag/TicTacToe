@@ -1,7 +1,11 @@
 package gpio;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Tim
@@ -30,19 +34,25 @@ public class GpioController {
     /**
      * Liste der exportierten pins, zum automatischen aufräumen, und zum werfen von
      * Ausnahmen bei Lese oder Schreibzugriff auf ungeöffnete pins.
+     * Speichert lese / schreibzugriff.
      */
-    private final List<GpioPins> exportiertePins;
+    private final Map<GpioPins, GpioMode> exportiertePins;
 
     public GpioController() {
-        exportiertePins = new ArrayList<GpioPins>();
+        exportiertePins = new HashMap<>();
     }
 
+    /**
+     * Öffnet einen Pin, muss einmalig vor der ersten Benützung dieses Pins erfolgen
+     * @param pin der zu öffnende Pin
+     */
     public void oeffnePin(GpioPins pin) {
         if (vertifizierePin(pin)) {
             throw new IllegalStateException(pin + " is already opened");
         }
-        //TODO: Öffne pin :)
-        exportiertePins.add(pin);
+        writeToFile(GPIO_EXPORT_FILE, String.valueOf(pin.getGpioNr()));
+        exportiertePins.put(pin, GpioMode.OUTPUT);
+        setPinModus(pin, GpioMode.OUTPUT);
     }
 
     /**
@@ -55,6 +65,10 @@ public class GpioController {
         if (!vertifizierePin(pin)) {
             throw new IllegalStateException(pin + " has not been opened yet! hint: call oeffnePin() first");
         }
+        if (exportiertePins.get(pin) != GpioMode.OUTPUT) {
+            throw new IllegalStateException(pin + " is in read mode. It can't be used as output pin.");
+        }
+        writeToFile(GPIO_VALUE_FILE.replace("${nr}", String.valueOf(pin.getGpioNr())), String.valueOf(wert ? 1 : 0));
     }
 
     /**
@@ -67,7 +81,11 @@ public class GpioController {
         if (!vertifizierePin(pin)) {
             throw new IllegalStateException(pin + " has not been opened yet! hint: call oeffnePin() first");
         }
-        return false;
+        if (exportiertePins.get(pin) != GpioMode.INPUT) {
+            throw new IllegalStateException(pin + " is in read mode. It can't be used as output pin.");
+        }
+        String val = readFromFile(GPIO_VALUE_FILE.replace("${nr}", String.valueOf(pin.getGpioNr())));
+        return val.equals("1");
     }
 
     /**
@@ -80,11 +98,37 @@ public class GpioController {
         if (!vertifizierePin(pin)) {
             throw new IllegalStateException(pin + " has not been opened yet! hint: call oeffnePin() first");
         }
+        writeToFile(GPIO_DIRECTION_FILE.replace("${nr}", String.valueOf(pin.getGpioNr())), modus.getValue());
+        exportiertePins.put(pin, modus);
+    }
 
+    /**
+     * Räumt alle offenen Pins auf
+     * @see GpioController#aufraumen(GpioPins)
+     */
+    public void allesAufraumen() {
+        for (GpioPins p : exportiertePins.keySet()) {
+            aufraumen(p);
+        }
+    }
+
+    /**
+     * Löscht die betriebsystem kopplung an den GPIO Port, sollte für jeden GPIO Pin durchgeführt werden
+     * Um alles aufzuräument kann auch {@link gpio.GpioController#allesAufraumen()} verwendet werden.
+     * aufgerufen werden.
+     * @param pin Pin zum aufräumen
+     */
+    public void aufraumen(GpioPins pin) {
+        if (!vertifizierePin(pin)) {
+            throw new IllegalStateException(pin + " has not been opened yet! You can't close a closed pin");
+        }
+        writeToFile(GPIO_UNEXPORT_FILE, String.valueOf(pin.getGpioNr()));
+        exportiertePins.remove(pin);
     }
 
     /**
      * Überprüft ob der gegebene Pin wirklich ein GPIO Pin ist, und gibt zurück ob der Pin registriert wurde.
+     *
      * @param pin Der zu prüfende Pin
      * @return true wenn der Pin schon geöffnet wurde
      * @throws IllegalArgumentException wenn der Pin kein GPIO Pin ist
@@ -93,7 +137,47 @@ public class GpioController {
         if (!pin.isGPIO()) {
             throw new IllegalArgumentException(pin + " is not a legal gpio pin!");
         }
-        return exportiertePins.contains(pin);
+        return exportiertePins.containsKey(pin);
+    }
+
+    /**
+     * Schreibt ein String in eine Datei
+     *
+     * @param file  die Datei zum reinschreiben
+     * @param value der String zum reinschreiben
+     */
+    private void writeToFile(String file, String value) {
+        try {
+            FileWriter w = new FileWriter(file);
+            w.write(value);
+            w.flush();
+            w.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Somehow can't write to file " + file, e);
+        }
+    }
+
+    /**
+     * Gibt den Inhalt der ersten Zeile einer Datei zurück
+     *
+     * @param file die Datei
+     * @return die erste Zeile der Datei
+     */
+    private String readFromFile(String file) {
+        BufferedReader w = null;
+        try {
+            w = new BufferedReader(new FileReader(file));
+            return w.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException("Somehow can't read from file " + file, e);
+        } finally {
+            if (w != null) {
+                try {
+                    w.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
     }
 
 }
