@@ -26,6 +26,10 @@ public class GpioController {
      * Der Pfad für die Datei welche den Wert des pinns bestimmt: an / aus
      */
     public static final String GPIO_VALUE_FILE = "/sys/class/gpio/gpio${nr}/value";
+	/**
+	 * Der Pfad über den an und aus für pins vertauscht werden kann.
+	 */
+	public static final String GPIO_ACTIVE_LOW_FILE = "/sys/class/gpio/gpio${nr}/activate_low";
     /**
      * Der Pfad für die Datei welche pins aufgeräumt werden
      */
@@ -139,6 +143,22 @@ public class GpioController {
         }
         return exportiertePins.containsKey(pin);
     }
+
+	/**
+	 * Stellt ein, ob der angegebene Pin eigentlich an sein soll, wenn er auf aus gesetzt ist und ungekehrt.
+	 *
+	 * @param pin Der zu ändernde Pin
+	 * @param an Ob die Funktion aktiviert werden soll
+	 * @throws IllegalStateException wenn der Pin  nicht geöffnet wurde
+	 * @throws IllegalArgumentException wenn der Pin kein GPIO Pin ist
+	 */
+	public void setActiveLow(GpioPins pin, boolean an) {
+		if (!vertifizierePin(pin)) {
+			throw new IllegalStateException(pin + " has not been opened yet.");
+		}
+		writeToFile(GPIO_ACTIVE_LOW_FILE, String.valueOf(pin.getGpioNr()));
+	}
+
 
     /**
      * Schreibt ein String in eine Datei
