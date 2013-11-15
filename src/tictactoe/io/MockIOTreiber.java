@@ -12,18 +12,18 @@ public class MockIOTreiber implements IOInterface {
 	/**
 	 * LEDs - theoretisch an oder aus.
 	 */
-	private boolean leds[] = new boolean[11];
+	private boolean leds[] = new boolean[12];
 
 	/**
 	 * Spielfeld - aus, an, blinken langsam, blinken schnell
 	 */
-	private int feld[] = new int[11];
+	private int feld[] = new int[12];
 
 	/**
 	 * Konstruktor, initialisiere das Spielfeld.
 	 */
 	public MockIOTreiber() {
-		for (int i = 0; i < 11; i++) {
+		for (int i = 0; i < 12; i++) {
 			leds[i] = false;
 			feld[i] = 0;
 		}
@@ -47,7 +47,7 @@ public class MockIOTreiber implements IOInterface {
 	 * Siehe IOInterface
 	 */
 	public void setFeld(int feldnummer, int zustand) {
-		if (feldnummer > 11 || feldnummer < 1) {
+		if (feldnummer > 12 || feldnummer < 1) {
 			throw new IllegalArgumentException("feldnummer ungültig.");
 		}
 		if (zustand < 0 || zustand > 3) {
@@ -111,7 +111,7 @@ public class MockIOTreiber implements IOInterface {
 			System.out.print( (leds[i] ? " #" : " _") + " |");
 		}
 
-		System.out.print("| s1: " + (leds[9] ? "#" : "_") + " s2: " + (leds[10] ? "#" : "_"));
+		System.out.print("| e1: " + (leds[9] ? "#" : "_") + " e2: " + (leds[10] ? "#" : "_") + " e3: " + (leds[11] ? "#" : "_"));
 		System.out.print(" b1: " + (gedruekt1 ? "↓" : "^") + " b2: " +(gedruekt2 ? "↓" : "^") + " > ");
 	}
 
@@ -156,7 +156,7 @@ public class MockIOTreiber implements IOInterface {
 		schellBlinkenAn = ((schnellBinken == 0) ? !schellBlinkenAn : schellBlinkenAn);
 		langsamBlinkenAn = ((langsamBlinken == 0) ? !langsamBlinkenAn : langsamBlinkenAn);
 
-		for (int i = 0; i < 11; i++) {
+		for (int i = 0; i < 12; i++) {
 			switch (feld[i]) {
 				case 0:
 					leds[i] = false;
@@ -177,5 +177,12 @@ public class MockIOTreiber implements IOInterface {
 
 		updateInput();
 		updateUI();
+	}
+
+	/**
+	 * Aufräumen.
+	 */
+	public void beenden() {
+		// Wir haben nichts zu schliessen.
 	}
 }
