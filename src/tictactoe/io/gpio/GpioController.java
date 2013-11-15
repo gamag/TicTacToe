@@ -1,4 +1,4 @@
-package gpio;
+package tictactoe.io.gpio;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

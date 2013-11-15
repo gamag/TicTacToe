@@ -1,14 +1,14 @@
+package tictactoe.io;
+
 /**
  * Interface zum Vereinheitlichen verschiedener Ein/Ausgabe Möglichkeiten wie GPIO oder Tastatur.
  *
  * Wir bieten nur Funktionen zum setzen der Spielfelder und der Benutzermarkierungen sowie zum lesen des
  * aktuellen  Tastenzustands. Eine Änderung des Tastendruckes wird nicht bemerkt. Der Zustand der
  * Spielfelder/LEDs kann nicht abgefragt werden.
- * Änderungen werden spätestens beim nächsten Update() Aufruf übernommen.
- * Die Update Funktion sollte mindestens 24 mal pro Sekunde aufgerufen werden, da die GPIO Ausgabe mit Matrix
- * auf schnellem Blinken beruht.
+ * Änderungen werden spätestens beim nächsten {@link IOInterface#update()} Aufruf übernommen.
  */
-interface IOInterface {
+public interface IOInterface {
 
 	/**
 	 * Setzt das angegeben Feld des Spielfeldes auf den angegeben Zustand.
@@ -31,8 +31,6 @@ interface IOInterface {
 
 	/**
 	 * Aktualisiert die Ausgabe.
-	 *
-	 * Mind. 24 mal pro Sekunde aufrufen.
 	 */
 	void update();
 }

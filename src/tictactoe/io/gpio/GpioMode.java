@@ -1,4 +1,4 @@
-package gpio;
+package tictactoe.io.gpio;
 
 /**
  * @author Tim
