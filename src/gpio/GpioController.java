@@ -106,6 +106,21 @@ public class GpioController {
         exportiertePins.put(pin, modus);
     }
 
+	/**
+	 * Stellt ein, ob der angegebene Pin eigentlich an sein soll, wenn er auf aus gesetzt ist und ungekehrt.
+	 *
+	 * @param pin Der zu ändernde Pin
+	 * @param an Ob die Funktion aktiviert werden soll
+	 * @throws IllegalStateException wenn der Pin  nicht geöffnet wurde
+	 * @throws IllegalArgumentException wenn der Pin kein GPIO Pin ist
+	 */
+	public void setActiveLow(GpioPins pin, boolean an) {
+		if (!vertifizierePin(pin)) {
+			throw new IllegalStateException(pin + " has not been opened yet.");
+		}
+		writeToFile(GPIO_ACTIVE_LOW_FILE.replace("${nr}", String.valueOf(pin.getGpioNr())), an ? "1" : "0");
+	}
+
     /**
      * Räumt alle offenen Pins auf
      * @see GpioController#aufraumen(GpioPins)
@@ -143,22 +158,6 @@ public class GpioController {
         }
         return exportiertePins.containsKey(pin);
     }
-
-	/**
-	 * Stellt ein, ob der angegebene Pin eigentlich an sein soll, wenn er auf aus gesetzt ist und ungekehrt.
-	 *
-	 * @param pin Der zu ändernde Pin
-	 * @param an Ob die Funktion aktiviert werden soll
-	 * @throws IllegalStateException wenn der Pin  nicht geöffnet wurde
-	 * @throws IllegalArgumentException wenn der Pin kein GPIO Pin ist
-	 */
-	public void setActiveLow(GpioPins pin, boolean an) {
-		if (!vertifizierePin(pin)) {
-			throw new IllegalStateException(pin + " has not been opened yet.");
-		}
-		writeToFile(GPIO_ACTIVE_LOW_FILE, String.valueOf(pin.getGpioNr()));
-	}
-
 
     /**
      * Schreibt ein String in eine Datei
