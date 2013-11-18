@@ -123,7 +123,7 @@ public class GpioController {
 
     /**
      * Räumt alle offenen Pins auf
-     * @see GpioController#aufraumen(GpioPins)
+     * @see tictactoe.io.gpio.GpioController#aufraumen(GpioPins)
      */
     public void allesAufraumen() {
         for (GpioPins p : exportiertePins.keySet()) {
