@@ -29,7 +29,7 @@ public class GpioController {
 	/**
 	 * Der Pfad über den an und aus für pins vertauscht werden kann.
 	 */
-	public static final String GPIO_ACTIVE_LOW_FILE = "/sys/class/gpio/gpio${nr}/activate_low";
+	public static final String GPIO_ACTIVE_LOW_FILE = "/sys/class/gpio/gpio${nr}/active_low";
     /**
      * Der Pfad für die Datei welche pins aufgeräumt werden
      */
