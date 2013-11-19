@@ -1,4 +1,4 @@
-package logik;
+package tictactoe.logik;
 /**
  * Tic Tac Toe Logik.
  */
