@@ -156,7 +156,7 @@ public enum GpioPins {
 
     private GpioPins(boolean isGPIO, int gpioNr) {
         this.isGPIO = isGPIO;
-        if (isGPIO) {
+        if (!isGPIO) {
             this.gpioNr = -1;
         } else {
             this.gpioNr = gpioNr;
