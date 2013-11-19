@@ -1,4 +1,4 @@
-package tictactoe.io;
+package tictactoe.io.spieler;
 
 /**
  * Ein Spieler-Objekt steuert die Ein- und Ausgabe auf dem Medium, an dem der Spieler spielt.
