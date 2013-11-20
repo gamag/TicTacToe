@@ -1,7 +1,7 @@
 package tictactoe.io.spieler;
 
 import tictactoe.logik.Spiellogik;
-import tictactoe.io.IOInterface;
+import tictactoe.io.gpio.gpioIOTreiber;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,12 +13,17 @@ public class GpioSpieler implements SpielerInterface {
 	/**
 	 * Das IO Objekt.
 	 */
-	private IOInterface io;
+	private static IOInterface io;
 
 	/**
 	 * Das Logik Objekt.
 	 */
 	private Spiellogik logik;
+
+	/**
+	 * Wie viele instanzen greifen noch auf io zu?
+	 */
+	private static int referenzen = 0;
 
 	/**
 	 * Welcher Spieler wir sind.
@@ -28,16 +33,21 @@ public class GpioSpieler implements SpielerInterface {
 
 	/**
 	 * Konstuktor
-	 *
-	 * @param ioObjekt das zu verwendende GpioObjekt. 
-	 * Das Objekt muss vollständig initialisiert sein, d.h. alle threads müssen laufen.
-	 * @param logikObjekt die verwendete Spiellogik.
-	 * @param spiler die Nummer von uns.
 	 */
-	public GpioSpieler(IOInterface ioObjekt, Spiellogik logikObjekt, int spieler) {
-		io = ioObjekt;
-		logik = logikObjekt;
+	public GpioSpieler() {
+		if (referenzen <= 0) {
+			io = new GpioIOTreiber();
+			io.run();
+		}
+		referenzen++;
+	}
+
+	/**
+	 * Initalisiert ein Spiel.
+	 */
+	public void starteSpiel(Spiellogik spl, int spieler) {
 		spielerNr = spieler;
+		logik = spl;
 	}
 
 
@@ -73,7 +83,7 @@ public class GpioSpieler implements SpielerInterface {
 	 * @return Die Feldnummer, oder -1, wenn abgebrochen werden soll.
 	 * @throws IllegalStateException wenn das Spielfeld voll ist.
 	 */
-	public int getSpielzug() {
+	public int spielzug() {
 		io.setFeld(10, spielerNr);
 
 		int aktuellesFeld = findeMoeglichenZug(0);
@@ -112,7 +122,7 @@ public class GpioSpieler implements SpielerInterface {
 	 *
 	 * @param feld Feldnummer.
 	 */
-	public void setGegenzug(int feld) {
+	public void gegenzug(int feld) {
 		io.setFeld(feld, (spielerNr % 2) + 1);
 	}
 
@@ -221,6 +231,16 @@ public class GpioSpieler implements SpielerInterface {
 				TimeUnit.MILLISECONDS.sleep(40);
 			} catch (InterruptedException e) {
 			}
+		}
+	}
+
+	/**
+	 * Beenden.
+	 */
+	public void beenden() {
+		referenzen --;
+		if (referenzen <= 0) {
+			io.beenden();
 		}
 	}
 }

@@ -1,5 +1,7 @@
 package tictactoe.io.spieler;
 
+import tictactoe.logik.Spiellogik;
+
 /**
  * Ein Spieler-Objekt steuert die Ein- und Ausgabe auf dem Medium, an dem der Spieler spielt.
  *
@@ -8,19 +10,27 @@ package tictactoe.io.spieler;
  */
 public interface SpielerInterface {
 	/**
+	 * Initialisiert ein Spiel.
+	 *
+	 * @param logik die verwendete Spiellogik.
+	 * @param spieler spieler Nummer wieviel wir sind.
+	 */
+	public void starteSpiel(Spiellogik logik, int Spieler);
+
+	/**
 	 * Lässt den Spieler einen Zug machen.
 	 *
 	 * @return Die Feldnummer.
 	 * @throws IllegalStateException wenn das Spielfeld voll ist.
 	 */
-	public int getSpielzug();
+	public int spielzug();
 
 	/**
 	 * Zeig den zu des Gegners an.
 	 *
 	 * @param feld Feldnummer.
 	 */
-	public void setGegenzug(int feld);
+	public void gegenzug(int feld);
 
 	/**
 	 * Zeig an, dass der gegeben Spieler gewonnen hat.
@@ -46,4 +56,12 @@ public interface SpielerInterface {
 	 * Wartet auf eine Eingabe.
 	 */
 	public void warteAufEingabe();
+
+	/**
+	 * Schliesst das Objekt.
+	 *
+	 * Nach einem Aufruf dieser Methode ist das verhalten anderer Methoden des Objekts undefiniert.
+	 */
+	public void beenden();
+
 }

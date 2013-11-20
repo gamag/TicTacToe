@@ -96,49 +96,57 @@ public class GpioIOTreiber implements IOInterface {
 	 */
 	private boolean langsamBlinkenAn;
 
+	/**
+	 * True wenn beendet werden soll.
+	 */
+	private volatile boolean sollBeenden;
+
 
 	/**
 	 * @see tictactoe.io.IOInterface
 	 */
-	public void update() {
-		schnellBinken++;
-		langsamBlinken++;
-		schnellBinken %= 5;
-		langsamBlinken %= 20;
+	public void run() {
+		while (!beenden) {
+			schnellBinken++;
+			langsamBlinken++;
+			schnellBinken %= 5;
+			langsamBlinken %= 20;
 
-		if (schnellBinken != 0 && langsamBlinken != 0) {
-			return; // Wir brauchen nicht so oft zu aktuallisieren.
-		}
+			if (schnellBinken != 0 && langsamBlinken != 0) {
+				return; // Wir brauchen nicht so oft zu aktuallisieren.
+			}
 
-		// Bei 0 LEDs umschalten:
-		schellBlinkenAn = ((schnellBinken == 0) ? !schellBlinkenAn : schellBlinkenAn);
-		langsamBlinkenAn = ((langsamBlinken == 0) ? !langsamBlinkenAn : langsamBlinkenAn);
+			// Bei 0 LEDs umschalten:
+			schellBlinkenAn = ((schnellBinken == 0) ? !schellBlinkenAn : schellBlinkenAn);
+			langsamBlinkenAn = ((langsamBlinken == 0) ? !langsamBlinkenAn : langsamBlinkenAn);
 
-		for (int i = 0; i < 12; i++) {
-			switch (feld[i]) {
-				case 0:
-					ledThread.setLed(i, false);
-					break;
-				case 1:
-					ledThread.setLed(i, true);
-					break;
-				case 2:
-					ledThread.setLed(i, langsamBlinkenAn);
-					break;
-				case 3:
-					ledThread.setLed(i, schellBlinkenAn);
-					break;
-				default:
-					ledThread.setLed(i, false);
+			for (int i = 0; i < 12; i++) {
+				switch (feld[i]) {
+					case 0:
+						ledThread.setLed(i, false);
+						break;
+					case 1:
+						ledThread.setLed(i, true);
+						break;
+					case 2:
+						ledThread.setLed(i, langsamBlinkenAn);
+						break;
+					case 3:
+						ledThread.setLed(i, schellBlinkenAn);
+						break;
+					default:
+						ledThread.setLed(i, false);
+				}
 			}
 		}
+		gpioSteuerung.allesAufraumen();
+		ledThread.beenden();
 	}
 
 	/**
 	 * @see tictactoe.io.IOInterface
 	 */
 	public void beenden() {
-		gpioSteuerung.allesAufraumen();
-		ledThread.beenden();
+		sollBeenden = true;
 	}
 }
