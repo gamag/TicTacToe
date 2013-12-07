@@ -72,7 +72,7 @@ public class GpioIOTreiber implements IOInterface {
 	/**
 	 * @see tictactoe.io.IOInterface
 	 */
-	public boolean istGerdrueckt(int knopf) {
+	public boolean istGedrueckt(int knopf) {
 		return (knopf == 1) ? gpioSteuerung.getEnabled(KNOPF_1) : gpioSteuerung.getEnabled(KNOPF_2);
 	}
 

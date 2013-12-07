@@ -1,13 +1,14 @@
 package tictactoe.io;
 
 import java.io.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Simuliert das GPIO Spielfeld über Tastatur und Bildschirm.
  *
  * Zum Testen des TicTacToe Spieles wenn die Hardware nicht verfügbar ist. Keine brauchbare Benutzeroberfläche.
  */
-public class MockIOTreiber implements IOInterface {
+public class MockIOTreiber extends Thread implements IOInterface {
 
 	/**
 	 * LEDs - theoretisch an oder aus.
@@ -17,7 +18,7 @@ public class MockIOTreiber implements IOInterface {
 	/**
 	 * Spielfeld - aus, an, blinken langsam, blinken schnell
 	 */
-	private int feld[] = new int[12];
+	private volatile int feld[] = new int[12];
 
 	/**
 	 * Konstruktor, initialisiere das Spielfeld.
@@ -74,9 +75,11 @@ public class MockIOTreiber implements IOInterface {
 					char c = st.charAt(i);
 					if (c == '1') {
 						gedruekt1 = !gedruekt1;
+						neuGedruekt1 = gedruekt1;
 					}
 					if (c == '2') {
 						gedruekt2 = !gedruekt2;
+						neuGedruekt2 = !gedruekt2;
 					}
 				}
 			}
@@ -87,18 +90,43 @@ public class MockIOTreiber implements IOInterface {
 	/**
 	 * Knopf 1 gedrückt?
 	 */
-	private boolean gedruekt1;
+	private volatile boolean gedruekt1;
 
 	/**
 	 * Knopf 2 gedrückt?
 	 */
-	private boolean gedruekt2;
+	private volatile boolean gedruekt2;
+
+	/**
+	 * Knopf 1 geht gerade runter ?
+	 */
+	private volatile boolean neuGedruekt1;
+
+	/**
+	 * Knopf 2 geht gerade runter ?
+	 */
+	private volatile boolean neuGedruekt2;
 
 	/**
 	 * Testet ob 1 oder 2 eingegeben wurde.
 	 */
-	public boolean istGerdrueckt(int knopf) {
+	public boolean istGedrueckt(int knopf) {
 		return (knopf == 1) ? gedruekt1 : gedruekt2;
+	}
+
+	/**
+	 * Testet ob 1 oder 2 gerade eingegeben wurde.
+	 */
+	public boolean istNeuGedrueckt(int knopf) {
+		boolean ret;
+		if (knopf == 1) {
+			ret = neuGedruekt1;
+			neuGedruekt1 = false;
+		} else {
+			ret = neuGedruekt2;
+			neuGedruekt2 = false;
+		}
+		return ret;
 	}
 
 	/**
@@ -135,6 +163,11 @@ public class MockIOTreiber implements IOInterface {
 	 */
 	private boolean langsamBlinkenAn;
 
+	/**
+	 * Wenn beendet werden soll.
+	 */
+	private volatile boolean stop;
+
 
 	/**
 	 * Update - Ausgabe aktualisieren.
@@ -142,47 +175,55 @@ public class MockIOTreiber implements IOInterface {
 	 * Die Standartausgabe ist zu langsam um immer nur eine LED anzuzeigen, wie es mit der Matrix nötig wird,
 	 * daher machen wir hier nur langsames blinken.
 	 */
-	public void update() {
-		schnellBinken++;
-		langsamBlinken++;
-		schnellBinken %= 5;
-		langsamBlinken %= 20;
-
-		if (schnellBinken != 0 && langsamBlinken != 0) {
-			return; // Wir brauchen nicht so oft zu aktuallisieren.
-		}
-
-		// Bei 0 LEDs umschalten:
-		schellBlinkenAn = ((schnellBinken == 0) ? !schellBlinkenAn : schellBlinkenAn);
-		langsamBlinkenAn = ((langsamBlinken == 0) ? !langsamBlinkenAn : langsamBlinkenAn);
-
-		for (int i = 0; i < 12; i++) {
-			switch (feld[i]) {
-				case 0:
-					leds[i] = false;
-					break;
-				case 1:
-					leds[i] = true;
-					break;
-				case 2:
-					leds[i] = langsamBlinkenAn;
-					break;
-				case 3:
-					leds[i] = schellBlinkenAn;
-					break;
-				default:
-					leds[i] = false;
+	public void run() {
+		stop = false;
+		while (!stop) {
+			try {
+				TimeUnit.MILLISECONDS.sleep(40);
+			} catch (InterruptedException e) {
 			}
-		}
 
-		updateInput();
-		updateUI();
+			schnellBinken++;
+			langsamBlinken++;
+			schnellBinken %= 5;
+			langsamBlinken %= 20;
+
+			if (schnellBinken != 0 && langsamBlinken != 0) {
+				continue; // Wir brauchen nicht so oft zu aktuallisieren.
+			}
+
+			// Bei 0 LEDs umschalten:
+			schellBlinkenAn = ((schnellBinken == 0) ? !schellBlinkenAn : schellBlinkenAn);
+			langsamBlinkenAn = ((langsamBlinken == 0) ? !langsamBlinkenAn : langsamBlinkenAn);
+
+			for (int i = 0; i < 12; i++) {
+				switch (feld[i]) {
+					case 0:
+						leds[i] = false;
+						break;
+					case 1:
+						leds[i] = true;
+						break;
+					case 2:
+						leds[i] = langsamBlinkenAn;
+						break;
+					case 3:
+						leds[i] = schellBlinkenAn;
+						break;
+					default:
+						leds[i] = false;
+				}
+			}
+
+			updateInput();
+			updateUI();
+		}
 	}
 
 	/**
-	 * Aufräumen.
+	 * Anhalten.
 	 */
 	public void beenden() {
-		// Wir haben nichts zu schliessen.
+		stop = true;
 	}
 }

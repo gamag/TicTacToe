@@ -6,7 +6,6 @@ package tictactoe.io;
  * Wir bieten nur Funktionen zum setzen der Spielfelder und der Benutzermarkierungen sowie zum lesen des
  * aktuellen  Tastenzustands. Eine Änderung des Tastendruckes wird nicht bemerkt. Der Zustand der
  * Spielfelder/LEDs kann nicht abgefragt werden.
- * Änderungen werden spätestens beim nächsten {@link tictactoe.io.IOInterface#update()} Aufruf übernommen.
  */
 public interface IOInterface {
 
@@ -21,18 +20,26 @@ public interface IOInterface {
 	public void setFeld(int feldnummer, int zustand);
 
 	/**
-	 * Testet ob der angegeben Knopfes gedrückt ist.
+	 * Testet ob der angegeben Knopf gedrückt ist (keypress).
 	 *
 	 * @param knopf Nummer des Knopfes (1 = Auswahl, 2 = Bestätigen)
 	 *
 	 * @return true wenn der Knopf gedrückt ist.
 	 */
-	public boolean istGerdrueckt(int knopf);
+	public boolean istGedrueckt(int knopf);
 
 	/**
-	 * Aktualisiert die Ausgabe.
+	 * Testet ob der angegeben Knopf seit dem letzten Aufruf neu gedrükt wurde (keydown).
+	 * @param knopf Nummer des Knopfes (1 = Auswahl, 2 = Bestätigen)
+	 *
+	 * @return true wenn der Knopf gedrückt ist (keydown).
 	 */
-	public void update();
+	public boolean istNeuGedrueckt(int knopf);
+
+	/**
+	 * Startet die Ausgabe.
+	 */
+	public void run();
 
 	/**
 	 * Beendet die Aus-/Eingabe.

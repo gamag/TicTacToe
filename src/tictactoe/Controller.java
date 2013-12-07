@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import tictactoe.logik.*;
 import tictactoe.io.IOInterface;
+import tictactoe.io.spieler.*;
 
 /**
  * Steuerung und Verbinudung von Spiellogik und Ausgabe.
@@ -153,7 +154,7 @@ public class Controller {
 	 * "keydown" wird alle 50 runden wiederholt.
 	 */
 	private void updateButtons() {
-		if (io.istGerdrueckt(1)) {
+		if (io.istGedrueckt(1)) {
 			neuGedrueckt1 = (!gedrueckt1 || gedruecktSeit1 == 50);
 			gedrueckt1 = true;
 			losgelassen1 = false;
@@ -166,7 +167,7 @@ public class Controller {
 			gedrueckt1 = false;
 			gedruecktSeit1 = 0;
 		}
-		if (io.istGerdrueckt(2)) {
+		if (io.istGedrueckt(2)) {
 			neuGedrueckt2 = (!gedrueckt2 || gedruecktSeit2 == 50);
 			gedrueckt2 = true;
 			losgelassen2 = false;
@@ -303,15 +304,6 @@ public class Controller {
 	}
 
 	/**
-	 * "Räumt das Spielfeld ab".
-	 */
-	private void resetSpielfeld() {
-		for (int i = 1; i <= 12; i++) {
-			io.setFeld(i, 0);
-		}
-	}
-
-	/**
 	 * Gibt die x-Koordinate des angegebenen Feldes zurück.
 	 * @param feld Feldnummer (1-9).
 	 */
@@ -338,10 +330,6 @@ public class Controller {
 		io.update();
 		updateButtons();
 
-		try {
-			TimeUnit.MILLISECONDS.sleep(40);
-		} catch (InterruptedException e) {
-		}
 	}
 
 	/**

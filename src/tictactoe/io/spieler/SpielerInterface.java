@@ -35,7 +35,12 @@ public interface SpielerInterface {
 	 * @param liste die Liste, aus der gewählt wird.
 	 * @return den gewählten Index.
 	 */
-	public void wähle(String [] liste);
+	public int wähle(String [] liste);
+
+	/**
+	 * Räumt das Spielfeld ab.
+	 */
+	public void resetSpielfeld();
 
 	/**
 	 * Wartet auf eine Eingabe.

@@ -21,9 +21,10 @@ public class MockIOTest {
 		boolean gedruekt1 = false;
 		boolean gedruekt2 = false;
 		int spieler = 1;
+		a.run();
 		while (true) {
-			boolean s1 = a.istGerdrueckt(1);
-			boolean s2 = a.istGerdrueckt(2);
+			boolean s1 = a.istGedrueckt(1);
+			boolean s2 = a.istGedrueckt(2);
 
 			if (s1 && !gedruekt1) { // seit neustem gedrückt
 				a.setFeld((pos != 9) ? pos + 1 : 1, 3); // neues Feld setzen
@@ -56,8 +57,6 @@ public class MockIOTest {
 				a.setFeld(10, 0);
 				a.setFeld(11, 1);
 			}
-
-			a.update();
 
 			try {
 				TimeUnit.MILLISECONDS.sleep(40);
