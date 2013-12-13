@@ -29,7 +29,7 @@ public class MockIOTreiber extends Thread implements IOInterface {
 			feld[i] = 0;
 		}
 
-		schnellBinken = -1;
+		schnellBlinken = -1;
 		schellBlinkenAn = false;
 		langsamBlinken = -1;
 		langsamBlinkenAn = false;
@@ -146,7 +146,7 @@ public class MockIOTreiber extends Thread implements IOInterface {
 	/**
 	 * "Rundenzähler" für schnelles Blinken.
 	 */
-	private int schnellBinken;
+	private int schnellBlinken;
 
 	/**
 	 * Sind schnelle Blinker gerade an?
@@ -183,17 +183,17 @@ public class MockIOTreiber extends Thread implements IOInterface {
 			} catch (InterruptedException e) {
 			}
 
-			schnellBinken++;
+			schnellBlinken++;
 			langsamBlinken++;
-			schnellBinken %= 5;
+			schnellBlinken %= 5;
 			langsamBlinken %= 20;
 
-			if (schnellBinken != 0 && langsamBlinken != 0) {
+			if (schnellBlinken != 0 && langsamBlinken != 0) {
 				continue; // Wir brauchen nicht so oft zu aktuallisieren.
 			}
 
 			// Bei 0 LEDs umschalten:
-			schellBlinkenAn = ((schnellBinken == 0) ? !schellBlinkenAn : schellBlinkenAn);
+			schellBlinkenAn = ((schnellBlinken == 0) ? !schellBlinkenAn : schellBlinkenAn);
 			langsamBlinkenAn = ((langsamBlinken == 0) ? !langsamBlinkenAn : langsamBlinkenAn);
 
 			for (int i = 0; i < 12; i++) {

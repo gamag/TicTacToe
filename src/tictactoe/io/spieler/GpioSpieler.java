@@ -14,7 +14,7 @@ public class GpioSpieler implements SpielerInterface {
 	/**
 	 * Das IO Objekt.
 	 */
-	private static IOInterface io;
+	protected static IOInterface io;
 
 	/**
 	 * Das Logik Objekt.
@@ -24,7 +24,7 @@ public class GpioSpieler implements SpielerInterface {
 	/**
 	 * Wie viele instanzen greifen noch auf io zu?
 	 */
-	private static int referenzen = 0;
+	protected static int referenzen = 0;
 
 	/**
 	 * Welcher Spieler wir sind.
@@ -171,6 +171,13 @@ public class GpioSpieler implements SpielerInterface {
 
 			io.setFeld(10, 3);
 		}
+	}
+
+	/**
+	 * Gibt die Spielernummer zurück.
+	 */
+	public int getSpielerNr() {
+		return spielerNr;
 	}
 
 	/**

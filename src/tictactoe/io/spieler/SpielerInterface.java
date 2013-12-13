@@ -40,6 +40,11 @@ public interface SpielerInterface {
 	public void setGewinner(int spieler);
 
 	/**
+	 * Gibt die Nummer dieses Spielers zurück.
+	 */
+	public int getSpielerNr();
+
+	/**
 	 * Läst den Spieler eine Auswahl aus einer Liste treffen.
 	 *
 	 * @param liste die Liste, aus der gewählt wird.
