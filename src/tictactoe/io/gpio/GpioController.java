@@ -77,8 +77,11 @@ public class GpioController {
     if (exportiertePins.get(pin) != GpioMode.OUTPUT) {
       throw new IllegalStateException(pin + " is in read mode. It can't be used as output pin.");
     }
-    gpioValueOut[pin.getPinNr()].write(String.valueOf(wert ? 1 : 0));
-    gpioValueOut[pin.getPinNr()].flush();
+	try {
+		gpioValueOut[pin.getPinNr()].write(String.valueOf(wert ? 1 : 0));
+		gpioValueOut[pin.getPinNr()].flush();
+	} catch (IOException e) {
+	}
   }
   
   /**
@@ -94,8 +97,12 @@ public class GpioController {
     if (exportiertePins.get(pin) != GpioMode.INPUT) {
       throw new IllegalStateException(pin + " is in read mode. It can't be used as output pin.");
     }
-    int val = gpioValueIn[pin.getPinNr()].read();
-    return val == '1';
+	try {
+		int val = gpioValueIn[pin.getPinNr()].read();
+		return val == '1';
+	} catch (IOException e) {
+		return false;
+	}
   }
   
   /**
@@ -109,13 +116,18 @@ public class GpioController {
       throw new IllegalStateException(pin + " has not been opened yet! hint: call oeffnePin() first");
     }
     writeToFile(GPIO_DIRECTION_FILE.replace("${nr}", String.valueOf(pin.getGpioNr())), modus.getValue());
-    if (modus == GpioMode.INPUT) {
-      gpioValueOut[pin.getPinNr()] = null;
-      gpioValueIn[pin.getPinNr()] = new FileReader(GPIO_VALUE_FILE.replace("${nr}", String.valueOf(pin.getGpioNr())));
-    } else {
-      gpioValueOut[pin.getPinNr()] = new FileWriter(GPIO_VALUE_FILE.replace("${nr}", String.valueOf(pin.getGpioNr())));
-      gpioValueIn[pin.getPinNr()] = null;
-    }
+	try {
+		if (modus == GpioMode.INPUT) {
+		gpioValueOut[pin.getPinNr()] = null;
+		gpioValueIn[pin.getPinNr()] = new FileReader(GPIO_VALUE_FILE.replace("${nr}", String.valueOf(pin.getGpioNr())));
+		} else {
+		gpioValueOut[pin.getPinNr()] = new FileWriter(GPIO_VALUE_FILE.replace("${nr}", String.valueOf(pin.getGpioNr())));
+		gpioValueIn[pin.getPinNr()] = null;
+		}
+	} catch (IOException e) {
+		allesAufraumen();
+		throw new IllegalStateException(pin + " can not be opened. We can't continue like this.");
+	}
     
     exportiertePins.put(pin, modus);
   }
@@ -155,11 +167,14 @@ public class GpioController {
     if (!vertifizierePin(pin)) {
       throw new IllegalStateException(pin + " has not been opened yet! You can't close a closed pin");
     }
-	if (gpioValueOut[pin.getPinNr()] != null) {
-		gpioValueOut[pin.getPinNr()].close();
-	}
-	if (gpioValueIn[pin.getPinNr()] != null) {
-		gpioValueIn[pin.getPinNr()].close();
+	try {
+		if (gpioValueOut[pin.getPinNr()] != null) {
+			gpioValueOut[pin.getPinNr()].close();
+		}
+		if (gpioValueIn[pin.getPinNr()] != null) {
+			gpioValueIn[pin.getPinNr()].close();
+		}
+	} catch (IOException e) {
 	}
     writeToFile(GPIO_UNEXPORT_FILE, String.valueOf(pin.getGpioNr()));
     exportiertePins.remove(pin);

@@ -116,8 +116,6 @@ public class GpioSpieler implements SpielerInterface {
 			} catch (InterruptedException e) {
 			}
 		}
-
-		return -1;
 	}
 
 	/**

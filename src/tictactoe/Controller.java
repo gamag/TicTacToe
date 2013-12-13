@@ -134,7 +134,7 @@ public class Controller {
 				beenden();
 				return;
 			}
-			logik.setzeFeld(getX(naechsterZug), getY(naechsterZug), spieler);
+			logik.setzeFeld(getX(naechsterZug), getY(naechsterZug), spielerAmZug + 1);
 
 			spielerAmZug %= 1;
 
