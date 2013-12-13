@@ -20,7 +20,7 @@ public interface SpielerInterface {
 	/**
 	 * Lässt den Spieler einen Zug machen.
 	 *
-	 * @return Die Feldnummer.
+	 * @return Die Feldnummer. Oder -1, wenn das Spiel abgebrochen werden soll.
 	 * @throws IllegalStateException wenn das Spielfeld voll ist.
 	 */
 	public int spielzug();
@@ -35,7 +35,7 @@ public interface SpielerInterface {
 	/**
 	 * Zeig an, dass der gegeben Spieler gewonnen hat.
 	 *
-	 * @param spieler der Gewinner.
+	 * @param spieler der Gewinner (1 oder 2) oder irgendetwas anderes für unentschieden.
 	 */
 	public void setGewinner(int spieler);
 
@@ -53,7 +53,7 @@ public interface SpielerInterface {
 	public int wähle(String [] liste);
 
 	/**
-	 * Räumt das Spielfeld ab.
+	 * Räumt das Spielfeld ab und setzt die Spielernummer zurück.
 	 */
 	public void resetSpielfeld();
 

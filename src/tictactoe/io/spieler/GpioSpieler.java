@@ -3,6 +3,7 @@ package tictactoe.io.spieler;
 import tictactoe.logik.Spiellogik;
 import tictactoe.io.gpio.GpioIOTreiber;
 import tictactoe.io.IOInterface;
+import tictactoe.Controller;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,13 +30,14 @@ public class GpioSpieler implements SpielerInterface {
 	/**
 	 * Welcher Spieler wir sind.
 	 */
-	private int spielerNr;
+	protected int spielerNr;
 
 
 	/**
 	 * Konstuktor
 	 */
 	public GpioSpieler() {
+		spielerNr = 0;
 		if (referenzen <= 0) {
 			io = new GpioIOTreiber();
 			io.run();
@@ -64,14 +66,14 @@ public class GpioSpieler implements SpielerInterface {
 		i++;
 
 		while (i != feld) {
-			if (logik.istGueltig(getX(i), getY(i))) {
+			if (logik.istGueltig(Controller.getX(i), Controller.getY(i))) {
 				return i;
 			}
 			i %= 9;
 			i++;
 		}
 
-		if (feld != 0 && logik.istGueltig(getX(feld), getY(feld))) {
+		if (feld != 0 && logik.istGueltig(Controller.getX(feld), Controller.getY(feld))) {
 			return feld;
 		}
 
@@ -105,7 +107,7 @@ public class GpioSpieler implements SpielerInterface {
 				io.setFeld(aktuellesFeld, 3);
 			} else if (io.istNeuGedrueckt(2)) {
 				io.setFeld(aktuellesFeld, spielerNr);
-				logik.setzeFeld(getX(aktuellesFeld), getY(aktuellesFeld), spielerNr);
+				logik.setzeFeld(Controller.getX(aktuellesFeld), Controller.getY(aktuellesFeld), spielerNr);
 
 				return aktuellesFeld;
 			}
@@ -209,25 +211,10 @@ public class GpioSpieler implements SpielerInterface {
 	 * "Räumt das Spielfeld ab".
 	 */
 	public void resetSpielfeld() {
+		spielerNr = 0;
 		for (int i = 1; i <= 12; i++) {
 			io.setFeld(i, 0);
 		}
-	}
-
-	/**
-	 * Gibt die x-Koordinate des angegebenen Feldes zurück.
-	 * @param feld Feldnummer (1-9).
-	 */
-	private int getX(int feld) {
-		return ((feld - 1) % 3);
-	}
-
-	/**
-	 * Gibt die y-Koordinate des angegebenen Feldes zurück.
-	 * @param feld Feldnummer (1-9).
-	 */
-	private int getY(int feld) {
-		return ((feld-1) / 3);
 	}
 
 	/**

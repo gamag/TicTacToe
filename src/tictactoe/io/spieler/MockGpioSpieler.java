@@ -17,6 +17,7 @@ public class MockGpioSpieler extends GpioSpieler {
 	 * egal ob er Superklasse oder Gegenspieler ist.
 	 */
 	public MockGpioSpieler() {
+		spielerNr = 0;
 		if (GpioSpieler.referenzen <= 0) {
 			GpioSpieler.io = new GpioIOTreiber();
 			GpioSpieler.io.run();
