@@ -1,7 +1,8 @@
 package tictactoe.io.spieler;
 
 import tictactoe.logik.Spiellogik;
-import tictactoe.io.gpio.gpioIOTreiber;
+import tictactoe.io.gpio.GpioIOTreiber;
+import tictactoe.io.IOInterface;
 
 import java.util.concurrent.TimeUnit;
 

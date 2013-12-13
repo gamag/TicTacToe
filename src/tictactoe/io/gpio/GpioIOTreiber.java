@@ -1,6 +1,7 @@
 package tictactoe.io.gpio;
 
 import tictactoe.io.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * GPIO Ein-/Ausgabe für das Tic Tac Toe Spiel.
@@ -46,13 +47,20 @@ public class GpioIOTreiber implements IOInterface {
 		gpioSteuerung.oeffnePin(KNOPF_2);
 		gpioSteuerung.setPinModus(KNOPF_2, GpioMode.INPUT);
 
-		schnellBinken = -1;
+		schnellBlinken = -1;
 		schellBlinkenAn = false;
 		langsamBlinken = -1;
 		langsamBlinkenAn = false;
 
 		ledThread = new GpioMatrixThread();
 		ledThread.run();
+
+		gedrueckt1 = false;
+		gedrueckt2 = false;
+		neuGedrueckt1 = false;
+		neuGedrueckt2 = false;
+		rundenGerdrueckt1 = 0;
+		rundenGerdrueckt2 = 0;
 	}
 
 	/**
@@ -73,13 +81,87 @@ public class GpioIOTreiber implements IOInterface {
 	 * @see tictactoe.io.IOInterface
 	 */
 	public boolean istGedrueckt(int knopf) {
-		return (knopf == 1) ? gpioSteuerung.getEnabled(KNOPF_1) : gpioSteuerung.getEnabled(KNOPF_2);
+		return (knopf == 1) ? gedrueckt1 : gedrueckt2;
+	}
+
+	/**
+	 * @see tictactoe.io.IOInterface
+	 */
+	public boolean istNeuGedrueckt(int knopf) {
+		if (knopf == 1 && neuGedrueckt1) {
+			neuGedrueckt1 = false;
+			return true;
+		} else if (knopf == 2 && neuGedrueckt2) {
+			neuGedrueckt2 = false;
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * True, wenn Knopf1 gedrückt ist.
+	 */
+	boolean gedrueckt1;
+
+	/**
+	 * True, wenn Knopf1 in der letzten Runde gedrückt wurde. (keydown event)
+	 */
+	boolean neuGedrueckt1;
+
+	/**
+	 * Wie lange ist Knopf1 schon gedrückt?
+	 * Erst bei drei wird auch gedrueckt1 und neuGedruekt1 gesetzt.
+	 */
+	int rundenGerdrueckt1;
+
+	/**
+	 * True, wenn Knopf2 gedrückt ist.
+	 */
+	boolean gedrueckt2;
+
+	/**
+	 * True, wenn Knopf2 in der letzten Runde gedrückt wurde. (keydown event)
+	 */
+	boolean neuGedrueckt2;
+
+	/**
+	 * Wie lange ist Knopf2 schon gedrückt?
+	 * Erst bei drei wird auch gedrueckt2 und neuGedruekt2 gesetzt.
+	 */
+	int rundenGerdrueckt2;
+
+	private void updateInput() {
+		if (gpioSteuerung.getEnabled(KNOPF_1)) {
+			rundenGerdrueckt1++;
+			if (rundenGerdrueckt1 >= 3) {
+				if (!gedrueckt1) {
+					neuGedrueckt1 = true;
+				}
+				gedrueckt1 = true;
+			}
+		} else {
+			rundenGerdrueckt1 = 0;
+			gedrueckt1 = false;
+		}
+
+		if (gpioSteuerung.getEnabled(KNOPF_2)) {
+			rundenGerdrueckt2++;
+			if (rundenGerdrueckt2 >= 3) {
+				if (!gedrueckt2) {
+					neuGedrueckt2 = true;
+				}
+				gedrueckt2 = true;
+			}
+		} else {
+			rundenGerdrueckt2 = 0;
+			gedrueckt2 = false;
+		}
 	}
 
 	/**
 	 * "Rundenzähler" für schnelles Blinken.
 	 */
-	private int schnellBinken;
+	private int schnellBlinken;
 
 	/**
 	 * Sind schnelle Blinker gerade an?
@@ -106,18 +188,26 @@ public class GpioIOTreiber implements IOInterface {
 	 * @see tictactoe.io.IOInterface
 	 */
 	public void run() {
-		while (!beenden) {
-			schnellBinken++;
+		sollBeenden = false;
+		while (!sollBeenden) {
+			try {
+				TimeUnit.MILLISECONDS.sleep(40);
+			} catch (InterruptedException e) {
+			}
+
+			schnellBlinken++;
 			langsamBlinken++;
-			schnellBinken %= 5;
+			schnellBlinken %= 5;
 			langsamBlinken %= 20;
 
-			if (schnellBinken != 0 && langsamBlinken != 0) {
+			updateInput();
+
+			if (schnellBlinken != 0 && langsamBlinken != 0) {
 				return; // Wir brauchen nicht so oft zu aktuallisieren.
 			}
 
 			// Bei 0 LEDs umschalten:
-			schellBlinkenAn = ((schnellBinken == 0) ? !schellBlinkenAn : schellBlinkenAn);
+			schellBlinkenAn = ((schnellBlinken == 0) ? !schellBlinkenAn : schellBlinkenAn);
 			langsamBlinkenAn = ((langsamBlinken == 0) ? !langsamBlinkenAn : langsamBlinkenAn);
 
 			for (int i = 0; i < 12; i++) {
