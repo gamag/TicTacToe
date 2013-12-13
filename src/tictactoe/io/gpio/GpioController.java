@@ -13,11 +13,10 @@ import java.util.Map;
  */
 public class GpioController {
   
-  //TODO: Pfade bestätigen
   /**
   * Der Pfad für die Datei, welche die zu öffnenden pins entgegennimmt.
   */
-  public static final String GPIO_EXPORT = "/sys/class/gpio/export";
+  public static final String GPIO_EXPORT_FILE = "/sys/class/gpio/export";
   /**
   * Der Pfad für die Datei, welche den Modus für den pins entgegennimmt.
   */
@@ -35,8 +34,8 @@ public class GpioController {
   */
   public static final String GPIO_UNEXPORT_FILE = "/sys/class/gpio/unexport";
   
-  public Writer[] gpioValueOut;
-  public Reader[] gpioValueIn;
+  public FileWriter[] gpioValueOut;
+  public FileReader[] gpioValueIn;
   
   /**
   * Liste der exportierten pins, zum automatischen aufräumen, und zum werfen von
@@ -46,15 +45,8 @@ public class GpioController {
   private final Map<GpioPins, GpioMode> exportiertePins;
   
   public GpioController() {
-    int pins = 0;
-    for (GpioPins p : GpioPins.values() ) {
-      if (p.isGpio()) {
-        ++pins;
-      }
-    }
-    
-    gpioValueIn = new Reader[pins];
-    gpioValueOut = new Writer[pins];
+    gpioValueIn = new FileReader[27];  // das ist zwar zuviel, aber man spart sich so einige rechnerei.
+    gpioValueOut = new FileWriter[27]; // und da wir Java programmieren, sagen wir ja, dass uns Speicher egal ist.
     
     exportiertePins = new HashMap<>();
   }
@@ -85,8 +77,8 @@ public class GpioController {
     if (exportiertePins.get(pin) != GpioMode.OUTPUT) {
       throw new IllegalStateException(pin + " is in read mode. It can't be used as output pin.");
     }
-    //writeToFile(GPIO_VALUE_FILE.replace("${nr}", String.valueOf(pin.getGpioNr())), String.valueOf(wert ? 1 : 0));
-    gpioValueOut[pin.getGpioNr()].write(String.valueOf(wert ? 1 : 0));
+    gpioValueOut[pin.getPinNr()].write(String.valueOf(wert ? 1 : 0));
+    gpioValueOut[pin.getPinNr()].flush();
   }
   
   /**
@@ -102,9 +94,8 @@ public class GpioController {
     if (exportiertePins.get(pin) != GpioMode.INPUT) {
       throw new IllegalStateException(pin + " is in read mode. It can't be used as output pin.");
     }
-    //readFromFile(GPIO_VALUE_FILE.replace("${nr}", String.valueOf(pin.getGpioNr())));
-    String val = gpioValueIn[pin.getGpioNr()].readLine();
-    return val.equals("1");
+    int val = gpioValueIn[pin.getPinNr()].read();
+    return val == '1';
   }
   
   /**
@@ -118,12 +109,12 @@ public class GpioController {
       throw new IllegalStateException(pin + " has not been opened yet! hint: call oeffnePin() first");
     }
     writeToFile(GPIO_DIRECTION_FILE.replace("${nr}", String.valueOf(pin.getGpioNr())), modus.getValue());
-    if (modus.INPUT) {
-      gpioValueIn[pin.getGpioNr()] = new FileWriter(GPIO_VALUE_FILE.replace("${nr}", String.valueOf(pin.getGpioNr())));
-      gpioValueOut[pin.getGpioNr()] = null;
+    if (modus == GpioMode.INPUT) {
+      gpioValueOut[pin.getPinNr()] = null;
+      gpioValueIn[pin.getPinNr()] = new FileReader(GPIO_VALUE_FILE.replace("${nr}", String.valueOf(pin.getGpioNr())));
     } else {
-      gpioValueOut[pin.getGpioNr()] = new FileWriter(GPIO_VALUE_FILE.replace("${nr}", String.valueOf(pin.getGpioNr())));
-      gpioValueIn[pin.getGpioNr()] = null;
+      gpioValueOut[pin.getPinNr()] = new FileWriter(GPIO_VALUE_FILE.replace("${nr}", String.valueOf(pin.getGpioNr())));
+      gpioValueIn[pin.getPinNr()] = null;
     }
     
     exportiertePins.put(pin, modus);
@@ -164,6 +155,12 @@ public class GpioController {
     if (!vertifizierePin(pin)) {
       throw new IllegalStateException(pin + " has not been opened yet! You can't close a closed pin");
     }
+	if (gpioValueOut[pin.getPinNr()] != null) {
+		gpioValueOut[pin.getPinNr()].close();
+	}
+	if (gpioValueIn[pin.getPinNr()] != null) {
+		gpioValueIn[pin.getPinNr()].close();
+	}
     writeToFile(GPIO_UNEXPORT_FILE, String.valueOf(pin.getGpioNr()));
     exportiertePins.remove(pin);
   }
