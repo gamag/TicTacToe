@@ -1,12 +1,11 @@
 package tictactoe.io.gpio;
 
-import tictactoe.io.*;
 import java.util.concurrent.TimeUnit;
 
 /**
  * GPIO Ein-/Ausgabe für das Tic Tac Toe Spiel.
  */
-public class GpioIOTreiber extends Thread implements IOInterface {
+public class GpioIOTreiber extends Thread {
 
 	/**
 	 * Gpio Steuerungsobjekt.

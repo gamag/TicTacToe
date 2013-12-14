@@ -2,7 +2,6 @@ package tictactoe.io.spieler;
 
 import tictactoe.logik.Spiellogik;
 import tictactoe.io.gpio.GpioIOTreiber;
-import tictactoe.io.IOInterface;
 import tictactoe.Controller;
 
 import java.util.concurrent.TimeUnit;
@@ -15,7 +14,7 @@ public class GpioSpieler implements SpielerInterface {
 	/**
 	 * Das IO Objekt.
 	 */
-	protected static IOInterface io;
+	protected static GpioIOTreiber io;
 
 	/**
 	 * Das Logik Objekt.
