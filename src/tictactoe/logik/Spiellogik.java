@@ -90,7 +90,7 @@ public class Spiellogik {
 	 */
 	public void setzeFeld(int x, int y, int wert) {
 		if (!istGueltig(x, y)) {
-			throw new IllegalArgumentException("Ungültiger Zug!");
+			throw new IllegalArgumentException("Ungültiger Zug: " + x + " " + y);
 		}
 		spielfeld[x][y] = wert;
 	}

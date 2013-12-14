@@ -197,7 +197,7 @@ public class GpioIOTreiber extends Thread implements IOInterface {
 
 			schnellBlinken++;
 			langsamBlinken++;
-			schnellBlinken %= 5;
+			schnellBlinken %= 3;
 			langsamBlinken %= 20;
 
 			updateInput();
@@ -230,8 +230,9 @@ public class GpioIOTreiber extends Thread implements IOInterface {
 				}
 			}
 		}
+		
 		gpioSteuerung.allesAufraumen();
-		ledThread.beenden();
+		ledThread.beenden(); 
 	}
 
 	/**
@@ -239,5 +240,9 @@ public class GpioIOTreiber extends Thread implements IOInterface {
 	 */
 	public void beenden() {
 		sollBeenden = true;
+		try {
+			this.join();
+		} catch (InterruptedException e) {
+		} 
 	}
 }

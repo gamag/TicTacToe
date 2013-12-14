@@ -20,6 +20,8 @@ public class Controller {
 	public Controller (SpielerInterface master) {
 		this.master = master;
 		spieler =  new SpielerInterface[2];
+		spieler[0] = null;
+		spieler[1] = null;
 		initialisiert = true;
 	}
 
@@ -34,13 +36,6 @@ public class Controller {
 	 * {@link tictactoe.Controller#run()} gibt dann bei nächster Gelegenheit zurück.
 	 */
 	private volatile boolean beenden;
-
-	/**
-	 * Ob das aktuelle Spiel abgebrochen werden soll.
-	 *
-	 * Die Kontrolle geht bei nächster Gelegenheit wieder an {@link tictactoe.Controller#run()}.
-	 */
-	private volatile boolean spielAbbrechen;
 
 	/**
 	 * Der zwischen den Spielen Kontrolle habende Spieler.
@@ -60,8 +55,6 @@ public class Controller {
 		}
 
 		while (true) {
-			spielAbbrechen = false;
-
 			String typen [] = {
 				"Gegen Gpio-Spielbrett.",
 				"Beenden."
@@ -87,13 +80,15 @@ public class Controller {
 
 			spiel();
 
-			if (master.getSpielerNr() != 1) {
+			if (master != spieler[0]) {
 				spieler[0].beenden();
 			}
 
-			if (master.getSpielerNr() != 2) {
+			if (master != spieler[1]) {
 				spieler[1].beenden();
 			}
+			spieler[0] = null;
+			spieler[1] = null;
 
 			master.resetSpielfeld();
 		}
@@ -132,12 +127,11 @@ public class Controller {
 		while (!logik.spielFertig()) {
 			int naechsterZug = spieler[spielerAmZug].spielzug();
 			if (naechsterZug == -1) {
-				beenden();
 				return;
 			}
-			logik.setzeFeld(getX(naechsterZug), getY(naechsterZug), spielerAmZug + 1);
 
-			spielerAmZug %= 1;
+			spielerAmZug ++;
+			spielerAmZug %= 2;
 
 			spieler[spielerAmZug].gegenzug(naechsterZug);
 		}
@@ -153,7 +147,14 @@ public class Controller {
 	 * Schliesst das Ausgabeobjekt.
 	 */
 	private void aufreumen() {
+		if (spieler[0] != null && master != spieler[0]) {
+			spieler[0].beenden();
+		}
 
+		if (spieler[1] != null && master != spieler[1]) {
+			spieler[1].beenden();
+		}
+		master.beenden();
 	}
 
 	/**

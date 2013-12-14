@@ -49,6 +49,7 @@ public class GpioSpieler implements SpielerInterface {
 	 * Initalisiert ein Spiel.
 	 */
 	public void starteSpiel(Spiellogik spl, int spieler) {
+		resetSpielfeld();
 		spielerNr = spieler;
 		logik = spl;
 	}
@@ -202,7 +203,7 @@ public class GpioSpieler implements SpielerInterface {
 			}
 		}
 		io.setFeld(aktuell, 2);
-		return aktuell;
+		return aktuell-1;
 	}
 
 	/**
@@ -219,7 +220,7 @@ public class GpioSpieler implements SpielerInterface {
 	 * Wartet auf eine Eingabe.
 	 */
 	public void warteAufEingabe() {
-		while (!io.istNeuGedrueckt(1) || io.istNeuGedrueckt(2)) {
+		while (!(io.istNeuGedrueckt(1) || io.istNeuGedrueckt(2))) {
 			try {
 				TimeUnit.MILLISECONDS.sleep(40);
 			} catch (InterruptedException e) {
