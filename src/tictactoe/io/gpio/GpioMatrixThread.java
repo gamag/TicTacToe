@@ -4,6 +4,21 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Thread, der die konkrete LED-Ausgabe durch schelles Blinken handhabt.
+ *
+ * Wir haben folgende Matrix (LED-Index und pin Name):
+ *
+ *	                  1 - wenn eine LED leuchten soll
+ *                  gpio18  gpio23  gpio24      gpio25
+ *
+ * 0 - wenn   gpio4    0      1       2
+ * eine LED
+ * leuchten   gpio17   3      4       5
+ * soll.
+ *            gpio14   6      7       8           9
+ *
+ * Knopf 1 hängt an +3.3V und gpio27
+ * Knopf 2 hängt an +3.3V und gpio22
+ *
  */
 public class GpioMatrixThread extends Thread {
 
@@ -38,19 +53,6 @@ public class GpioMatrixThread extends Thread {
 
 	/**
 	 * Die zu ändernden Ausgabepins, wenn auf ein Feld geschrieben werden soll.
-	 *
-	 * Wir haben folgende Matrix (LED-Index und pin name):
-	 *
-	 *       gpio18  gpio23  gpio24      gpio25
-	 *
-	 * gpio4    0      1       2
-	 *
-	 * gpio17   3      4       5
-	 *
-	 * gpio14?  6      7       8           9
-	 *
-	 *
-	 * TODO Testen ob gpio14 geht.
 	 */
 	private final GpioPins pins[][] = {
 		{GpioPins.GPIO_4, GpioPins.GPIO_18},
