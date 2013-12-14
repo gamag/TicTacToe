@@ -39,7 +39,7 @@ public interface IOInterface {
 	/**
 	 * Startet die Ausgabe.
 	 */
-	public void run();
+	public void start();
 
 	/**
 	 * Beendet die Aus-/Eingabe.

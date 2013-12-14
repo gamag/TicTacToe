@@ -20,7 +20,7 @@ public class MockGpioSpieler extends GpioSpieler {
 		spielerNr = 0;
 		if (GpioSpieler.referenzen <= 0) {
 			GpioSpieler.io = new GpioIOTreiber();
-			GpioSpieler.io.run();
+			GpioSpieler.io.start();
 		}
 		GpioSpieler.referenzen++;
 	}

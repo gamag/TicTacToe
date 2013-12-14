@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * GPIO Ein-/Ausgabe für das Tic Tac Toe Spiel.
  */
-public class GpioIOTreiber implements IOInterface {
+public class GpioIOTreiber extends Thread implements IOInterface {
 
 	/**
 	 * Gpio Steuerungsobjekt.
@@ -53,7 +53,7 @@ public class GpioIOTreiber implements IOInterface {
 		langsamBlinkenAn = false;
 
 		ledThread = new GpioMatrixThread();
-		ledThread.run();
+		ledThread.start();
 
 		gedrueckt1 = false;
 		gedrueckt2 = false;
@@ -201,9 +201,10 @@ public class GpioIOTreiber implements IOInterface {
 			langsamBlinken %= 20;
 
 			updateInput();
+			
 
 			if (schnellBlinken != 0 && langsamBlinken != 0) {
-				return; // Wir brauchen nicht so oft zu aktuallisieren.
+				continue; // Wir brauchen nicht so oft zu aktuallisieren.
 			}
 
 			// Bei 0 LEDs umschalten:

@@ -18,6 +18,7 @@ public class Controller {
 	 * @param master der spieler, der die Entscheidungen über das nächste Spiel trifft.
 	 */
 	public Controller (SpielerInterface master) {
+		this.master = master;
 		spieler =  new SpielerInterface[2];
 		initialisiert = true;
 	}

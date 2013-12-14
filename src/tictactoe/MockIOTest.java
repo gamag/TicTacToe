@@ -21,7 +21,7 @@ public class MockIOTest {
 		boolean gedruekt1 = false;
 		boolean gedruekt2 = false;
 		int spieler = 1;
-		a.run();
+		a.start();
 		while (true) {
 			boolean s1 = a.istGedrueckt(1);
 			boolean s2 = a.istGedrueckt(2);

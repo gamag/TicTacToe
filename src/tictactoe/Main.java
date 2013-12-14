@@ -8,7 +8,7 @@ import tictactoe.io.spieler.*;
  */
 public class Main {
 	public static void main(String[] args) {
-		Controller spiel = new Controller(new MockGpioSpieler());
+		Controller spiel = new Controller(new GpioSpieler());
 		spiel.run();
 	}
 }

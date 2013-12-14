@@ -50,6 +50,10 @@ public class GpioController {
     
     exportiertePins = new HashMap<>();
   }
+
+  protected void finalize() {
+  		allesAufraumen();
+  }
   
   /**
   * Öffnet einen Pin, muss einmalig vor der ersten Benützung dieses Pins erfolgen
@@ -78,7 +82,7 @@ public class GpioController {
       throw new IllegalStateException(pin + " is in read mode. It can't be used as output pin.");
     }
 	try {
-		gpioValueOut[pin.getPinNr()].write(String.valueOf(wert ? 1 : 0));
+		gpioValueOut[pin.getPinNr()].write(wert ? "1" : "0");
 		gpioValueOut[pin.getPinNr()].flush();
 	} catch (IOException e) {
 	}

@@ -40,7 +40,7 @@ public class GpioSpieler implements SpielerInterface {
 		spielerNr = 0;
 		if (referenzen <= 0) {
 			io = new GpioIOTreiber();
-			io.run();
+			io.start();
 		}
 		referenzen++;
 	}
@@ -188,7 +188,7 @@ public class GpioSpieler implements SpielerInterface {
 	 */
 	public int wähle(String [] liste) {
 		resetSpielfeld();
-		for (int i = 0; i <= liste.length; i++) {
+		for (int i = 1; i <= liste.length; i++) {
 			io.setFeld(i, 1);
 		}
 		int aktuell = 1;

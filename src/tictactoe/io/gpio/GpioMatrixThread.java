@@ -1,5 +1,7 @@
 package tictactoe.io.gpio;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Thread, der die konkrete LED-Ausgabe durch schelles Blinken handhabt.
  */
@@ -41,11 +43,11 @@ public class GpioMatrixThread extends Thread {
 	 *
 	 *       gpio18  gpio23  gpio24      gpio25
 	 *
-	 * gpio4    0      1       2           9
+	 * gpio4    0      1       2
 	 *
-	 * gpio17   3      4       5           10
+	 * gpio17   3      4       5
 	 *
-	 * gpio14?  6      7       8           11
+	 * gpio14?  6      7       8           9
 	 *
 	 *
 	 * TODO Testen ob gpio14 geht.
@@ -60,8 +62,6 @@ public class GpioMatrixThread extends Thread {
 		{GpioPins.GPIO_14, GpioPins.GPIO_18},
 		{GpioPins.GPIO_14, GpioPins.GPIO_23},
 		{GpioPins.GPIO_14, GpioPins.GPIO_24},
-		{GpioPins.GPIO_4, GpioPins.GPIO_25},
-		{GpioPins.GPIO_17, GpioPins.GPIO_25},
 		{GpioPins.GPIO_14, GpioPins.GPIO_25}
 	};
 
@@ -70,14 +70,14 @@ public class GpioMatrixThread extends Thread {
 	 *
 	 * Wie Lange ein Pin braucht bis er von 3.3 V auf 0 V kommt.
 	 */
-	private static final int LED_GEHT_AUS = 1;
+	private static final int LED_GEHT_AUS = 100;
 
 	/**
 	 * Wie lange eine LED leuchten darf (ms).
 	 *
 	 * Inklusive der Zeit, die der Pin von 0 V bis 3.3 V braucht.
 	 */
-	private static final int LED_LEUCHTET = 5;
+	private static final int LED_LEUCHTET = 600;
 
 	/**
 	 * Lässt den Thread laufen.
@@ -86,20 +86,22 @@ public class GpioMatrixThread extends Thread {
 		initGpio();
 
 		try {
+			beenden = false;
 			int i = 0;
 			while (!beenden) {
-				gpio.setPin(pins[i][0], true);
-				gpio.setPin(pins[i][1], true);
+				if (feld[i]) {
+					gpio.setPin(pins[i][0], true);
+					gpio.setPin(pins[i][1], true);
 
-				sleep(LED_LEUCHTET);
-
+					TimeUnit.NANOSECONDS.sleep(LED_LEUCHTET);
+				}
 				gpio.setPin(pins[i][0], false);
 				gpio.setPin(pins[i][1], false);
 
-				sleep(LED_GEHT_AUS);
+				TimeUnit.NANOSECONDS.sleep(LED_GEHT_AUS);
 
 				i++;
-				i %= 12;
+				i %= 10;
 			}
 		} catch (InterruptedException e) {
 			// handle like beenden == true
