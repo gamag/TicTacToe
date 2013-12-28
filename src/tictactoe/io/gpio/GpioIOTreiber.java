@@ -63,10 +63,12 @@ public class GpioIOTreiber extends Thread {
 	}
 
 	/**
-	 * @see tictactoe.io.IOInterface
+	 * Setzt ein Feld auf einen Zustand.
+	 * @param feldnummer die Nummer des zu setzenden Feldes (1-10)
+	 * @param zustand der Zustand, auf den das Feld gesetzt werden soll (0 = Aus, 1 = leuchten, 2 = Langsam Blinken, 3 = schnell Blinken)
 	 */
 	public void setFeld(int feldnummer, int zustand) {
-		if (feldnummer > 12 || feldnummer < 1) {
+		if (feldnummer > 11 || feldnummer < 1) {
 			throw new IllegalArgumentException("Feldnummer ungültig.");
 		}
 		if (zustand < 0 || zustand > 3) {
@@ -77,14 +79,18 @@ public class GpioIOTreiber extends Thread {
 	}
 
 	/**
-	 * @see tictactoe.io.IOInterface
+	 * Testet ob ein Knopf gedrückt ist.
+	 * @param knopf die Knopfnummer (1 oder 2)
+	 * @return true wenn der Knopf gedrückt ist.
 	 */
 	public boolean istGedrueckt(int knopf) {
 		return (knopf == 1) ? gedrueckt1 : gedrueckt2;
 	}
 
 	/**
-	 * @see tictactoe.io.IOInterface
+	 * Testet, ob der Knopf seit dem letzten Aufruf dieser Methode gedrückt wurde.
+	 * @param knopf die Knopfnummer (1 oder 2)
+	 * @return true, wenn der Knopf neu gedrückt ist.
 	 */
 	public boolean istNeuGedrueckt(int knopf) {
 		if (knopf == 1 && neuGedrueckt1) {
@@ -184,7 +190,8 @@ public class GpioIOTreiber extends Thread {
 
 
 	/**
-	 * @see tictactoe.io.IOInterface
+	 * Startet die Ausgabe. 
+	 * Zum starten des Thread bitte die start() Methode benutzen.
 	 */
 	public void run() {
 		sollBeenden = false;
@@ -235,7 +242,8 @@ public class GpioIOTreiber extends Thread {
 	}
 
 	/**
-	 * @see tictactoe.io.IOInterface
+	 * Lässt den Thread so schnell als möglich beenden.
+	 * Wartet, bis er beendet ist.
 	 */
 	public void beenden() {
 		sollBeenden = true;
