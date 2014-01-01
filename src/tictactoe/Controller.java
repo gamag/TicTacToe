@@ -57,6 +57,7 @@ public class Controller {
 		while (true) {
 			String typen [] = {
 				"Gegen Gpio-Spielbrett.",
+				"Gegen Textkonsole.",
 				"Beenden."
 			};
 
@@ -64,9 +65,13 @@ public class Controller {
 			boolean beenden = false;
 
 			switch (spieltyp) {
-				case 1:
+				case 2:
 				case -1:
 					spieltyp = -1;
+					break;
+				case 1:
+					spieler[0] = master;
+					spieler[1] = new KonsolenSpieler();
 					break;
 				case 0:
 				default:
