@@ -135,7 +135,7 @@ public class KonsolenSpieler implements SpielerInterface {
 		spielfeld[Controller.getX(feld)][Controller.getY(feld)] = (spielerNr == 1 ? 'X' : 'O');
 		if (bildschirmspiele < 2) {
 			printSpielfeld();
-			System.out.println("Spieler " + (spielerNr == 1 ? 'O' : 'X') + "hat auf (" 
+			System.out.println("Spieler " + (spielerNr == 1 ? 'X' : 'O') + " hat auf (" 
 					+ Controller.getX(feld) + "|" + Controller.getY(feld) + ") gesetzt." );
 		}
 	}
