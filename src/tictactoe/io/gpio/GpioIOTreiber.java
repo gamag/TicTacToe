@@ -30,13 +30,13 @@ public class GpioIOTreiber extends Thread {
 	/**
 	 * Spielfeld - aus, an, blinken langsam, blinken schnell
 	 */
-	private int feld[] = new int[12];
+	private int feld[] = new int[10];
 
 	/**
 	 * Konstruktor, initialisiere das Spielfeld.
 	 */
 	public GpioIOTreiber() {
-		for (int i = 0; i < 12; i++) {
+		for (int i = 0; i < 10; i++) {
 			feld[i] = 0;
 		}
 
@@ -217,7 +217,7 @@ public class GpioIOTreiber extends Thread {
 			schellBlinkenAn = ((schnellBlinken == 0) ? !schellBlinkenAn : schellBlinkenAn);
 			langsamBlinkenAn = ((langsamBlinken == 0) ? !langsamBlinkenAn : langsamBlinkenAn);
 
-			for (int i = 0; i < 12; i++) {
+			for (int i = 0; i < 10; i++) {
 				switch (feld[i]) {
 					case 0:
 						ledThread.setLed(i, false);
