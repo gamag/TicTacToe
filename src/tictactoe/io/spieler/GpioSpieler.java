@@ -210,7 +210,7 @@ public class GpioSpieler implements SpielerInterface {
 	 */
 	public void resetSpielfeld() {
 		spielerNr = 0;
-		for (int i = 1; i <= 12; i++) {
+		for (int i = 1; i <= 10; i++) {
 			io.setFeld(i, 0);
 		}
 	}
