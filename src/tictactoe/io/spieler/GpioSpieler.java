@@ -108,6 +108,7 @@ public class GpioSpieler implements SpielerInterface {
 			} else if (io.istNeuGedrueckt(2)) {
 				io.setFeld(aktuellesFeld, spielerNr);
 				logik.setzeFeld(Controller.getX(aktuellesFeld), Controller.getY(aktuellesFeld), spielerNr);
+				io.setFeld(10, (spielerNr % 2) + 1);
 
 				return aktuellesFeld;
 			}
