@@ -74,7 +74,10 @@ public class KonsolenSpieler implements SpielerInterface {
 		resetSpielfeld();
 		this.logik = logik;
 		spielerNr = spieler;
-		System.out.println("Spieler " + (spielerNr == 1 ? "O" : "X") + " ist am Zug.");
+		if (spieler == 1 || bildschirmspiele < 2) {
+			printSpielfeld();
+			System.out.println("Spieler " + (spielerNr == 1 ? "O" : "X") + " ist am Zug.");
+		}
 	}
 
 	/**
@@ -84,7 +87,6 @@ public class KonsolenSpieler implements SpielerInterface {
 	 * @throws IllegalStateException wenn das Spielfeld voll ist.
 	 */
 	public int spielzug() {
-		printSpielfeld();
 		int zug = -1;
 		do {
 			System.out.print("Koordinaten Ihres Zugs (Spalte Zeile, m zum Abbrechen) >");
@@ -124,6 +126,7 @@ public class KonsolenSpieler implements SpielerInterface {
 			}
 		} while (zug < 0);
 
+		printSpielfeld();
 		System.out.println("Spieler " + (spielerNr == 1 ? "X" : "O") + " ist am Zug.");
 		return zug;
 	}
@@ -139,6 +142,7 @@ public class KonsolenSpieler implements SpielerInterface {
 			printSpielfeld();
 			System.out.println("Spieler " + (spielerNr == 1 ? 'X' : 'O') + " hat auf (" 
 					+ Controller.getX(feld) + "|" + Controller.getY(feld) + ") gesetzt." );
+			System.out.println("Spieler " + (spielerNr == 1 ? "O" : "X") + " ist am Zug.");
 		}
 	}
 
